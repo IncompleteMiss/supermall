@@ -44,7 +44,7 @@
   import BackTop from "@/components/content/backTop/BackTop";
 
   import {getHomeMultidata, getHomeGoods} from "@/network/home";
-  import {debounce} from "@/common/util";
+  import {itemListenerMixin} from '@/common/mixin'
 
   export default {
     name: "Home",
@@ -59,6 +59,7 @@
       GoodList,
       BackTop
     },
+    mixins: [itemListenerMixin],
     data() {
       return {
         // result: null
@@ -72,7 +73,8 @@
         currentType: 'pop',
         isShowBackTop: false,
         tabOffsetTop: 0,
-        isTabFixed: false
+        isTabFixed: false,
+        saveY: 0
       }
     },
     computed: {
@@ -90,15 +92,36 @@
       this.getHomeGoods('sell')
     },
     mounted() {
-      // 1..监听item中图片加载完成
+     /*
+     // 1.监听item中图片加载完成
+
+      // this.$refs.scroll.refresh对这个函数进行防抖操作
       const refresh = debounce(this.$refs.scroll.refresh, 200)
-      this.$bus.$on('itemImageLoad', () => {
+
+      // 对监听的时间进行保存
+      this.itemImgListener = () => {
         this.$refs.scroll && refresh()
-      })
+      }
+      this.$bus.$on('itemImageLoad', this.itemImgListener)
+      */
 
       // 2.获取tabControl的offsetTop
       // 所有的组件都有一个属性$el: 用于获取组件中的元素
       // console.log(this.$refs.tabControl.$el.offsetTop);
+    },
+    destroyed() {
+      console.log('home destroyed')
+    },
+    activated() {
+      this.$refs.scroll.refresh()
+      this.$refs.scroll.scrollTo(0, this.saveY, 1)
+    },
+    deactivated() {
+      // 1.保存Y值
+      this.saveY = this.$refs.scroll.getScrollY()
+
+      // 2.取消全局事件的监听
+      this.$bus.$off('itemImageLoad', this.itemImgListener)
     },
     methods: {
       // 事件监听相关的方法
