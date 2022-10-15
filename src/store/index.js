@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 import mutations from '@/store/mutations'
 import actions from '@/store/actions'
+import getters from '@/store/getters'
 
 // 1.安装插件
 Vue.use(Vuex)
@@ -13,8 +14,7 @@ const state = {
 }
 const store = new Vuex.Store({
   state,
-  getters: {
-  },
+  getters,
   mutations: mutations,
   //{
     // mutations唯一的目的就是修改state中的状态
