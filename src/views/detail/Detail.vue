@@ -13,6 +13,7 @@
     </scroll>
     <BackTop @click.native="backTop" v-show="isShowBackTop"/>
     <detail-bottom-bar @addCart="addToCart"/>
+    <!-- <toast class="toast" :message="message" :is-show="show"/> -->
   </div>
 </template>
 
@@ -27,11 +28,15 @@
   import DetailBottomBar from '@/views/detail/childComponents/DetailBottomBar'
 
   import Scroll from '@/components/common/scroll/Scroll'
+  // import Toast from '@/components/common/toast/Toast'
   import GoodList from '@/components/content/goods/GoodList'
 
   import {getDetail, getRecommend, Goods, Shop, GoodsParam} from '@/network/detail'
   import {backTopMixin, itemListenerMixin} from '@/common/mixin'
   import {debounce} from '@/common/util'
+
+  // 将actions中方法映射到当前组件中
+  import { mapActions } from 'vuex'
 
   export default {
     name: "Detail",
@@ -45,7 +50,8 @@
       DetailParamInfo,
       DetailCommentInfo,
       Scroll,
-      GoodList
+      GoodList,
+      //Toast
     },
     mixins: [itemListenerMixin, backTopMixin],
     data() {
@@ -61,7 +67,9 @@
         themeTopYs: [],
         getThemeTopY: null,
         currentIndex: 0,
-        isShowBackTop: false
+        isShowBackTop: false,
+        // message: '',
+        // show: false
       }
     },
     created() {
@@ -139,6 +147,7 @@
       this.$bus.$off('itemImageLoad', this.itemImgListener)
     },
     methods: {
+      ...mapActions(['addCart']),
       imageLoad() {
         this.$refs.scroll.refresh()
 
@@ -195,9 +204,37 @@
         product.price = this.goods.realPrice
         product.iid = this.iid
 
-        // 2.将商品添加到购物车里
+        // 2.将商品添加到购物车里(1.Promise, 2.mapActions)
         // this.$store.commit('addCart', product)   // mutations
-        this.$store.dispatch('addCart', product)   // actions
+        // actions
+       /*
+       this.$store.dispatch('addCart', product).then(res => {
+          console.log(res)
+        }).catch(res => {
+          console.log(res)
+        })
+        */
+        // 本质为调用this.$store.dispatch('addCart', product)方法
+        this.addCart(product).then(res => {
+          /*
+          this.show = true
+          this.message = res
+          setTimeout(() => {
+            this.show = false
+            this.message = ''
+          }, 1000)
+          console.log(res)
+        }).catch(res => {
+          this.show = true
+          this.message = res
+          setTimeout(() => {
+            this.show = false
+            this.message = '加入购物车失败，请重试'
+          }, 1000)
+          console.log(res)
+          */
+          this.$toast.show(res, 1500)
+        })
       }
     }
   }
