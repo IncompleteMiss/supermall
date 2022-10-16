@@ -1,5 +1,9 @@
 @import "./normalize.css";
 
+*{
+  touch-action: pan-y;
+}
+
 /* :root -> 获取根元素html */
 :root {
   --color-text: #666;  /* 定义变量，通过var(变量名使用) */
@@ -20,11 +24,11 @@
   box-sizing: border-box;
 }
 
-/* 
+/*
   -webkit-tap-highlight-color
     这个属性只用于iOS (iPhone和iPad)。
     当你点击一个链接或者通过Javascript定义的可点击元素的时候，它就会出现一个半透明的灰色背景。
-    想要禁用这个高亮，设置颜色的alpha值为0即可。 
+    想要禁用这个高亮，设置颜色的alpha值为0即可。
 */
 body {
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
